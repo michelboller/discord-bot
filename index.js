@@ -1,13 +1,18 @@
 require('dotenv').config();
-const Discord = require('discord.js');
+const {
+    Client,
+    MessageEmbed
+} = require('discord.js');
 const got = require('got')
 const string = require('string')
 
-const bot = new Discord.Client();
+const bot = new Client();
+
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`);
 });
+
 
 bot.login(process.env.DISCORD_TOKEN);
 
@@ -28,20 +33,42 @@ bot.on('message', async msg => {
             return
         }
         try {
-            const appid = 'f17f5d50598f71565958e51b0575b845'
+            const appid = process.env.APPID
             const unidade = 'metric'
             const url = `http://api.openweathermap.org/data/2.5/weather?q=${cidade},br&appid=${appid}&units=${unidade}`
 
             const response = await got(url)
             const rf = JSON.parse(response.body)
-            msg.reply(`
-City: ${rf.name}
+
+            const cEmb = new MessageEmbed()
+                .setTitle(`Clima em ${rf.name}`)
+                .setDescription(`
 Temperature: ${rf.main.temp} °C
-Weather: ${rf.weather[0].main}`)
+Weather: ${rf.weather[0].main}
+`)
+                .setColor("BLURPLE")
+                .setFooter('Made by shaulin#4466')
+            let react = await msg.channel.send(cEmb)
+            const clima = rf.main.temp
+            if (clima >= 29) {
+                react.react('🔥')
+            } else if (clima >= 25) {
+                react.react('🌤')
+            } else if (clima <= 23) {
+                react.react('☁')
+            }
+
+            //             msg.reply(`
+            // City: ${rf.name}
+            // Temperature: ${rf.main.temp} °C
+            // Weather: ${rf.weather[0].main}`)
         } catch (error) {
             msg.reply(`Erro: ${error}`)
         }
 
 
     }
+    //     if(msg.content === '!ajuda'){
+    //         msg.se
+    //     }
 })
