@@ -8,7 +8,6 @@ const string = require('string')
 
 const bot = new Client();
 
-
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`);
 });
@@ -41,12 +40,12 @@ bot.on('message', async msg => {
             const rf = JSON.parse(response.body)
 
             const cEmb = new MessageEmbed()
-                .setTitle(`Clima em ${rf.name}`)
-                .setDescription(`
-Temperature: ${rf.main.temp} °C
-Weather: ${rf.weather[0].main}
-`)
+                .setTitle('Weather bot')
+                .addField('City: ', `${rf.name}`)
+                .addField('Temperature: ', `${rf.main.temp} °C`)
+                .addField('Weather: ', `${rf.weather[0].main}`)
                 .setColor("BLURPLE")
+                .setThumbnail('https://media.giphy.com/media/26u6dryuZH98z5KuY/giphy.gif')
                 .setFooter('Made by shaulin#4466')
             let react = await msg.channel.send(cEmb)
             const clima = rf.main.temp
@@ -63,12 +62,25 @@ Weather: ${rf.weather[0].main}
             // Temperature: ${rf.main.temp} °C
             // Weather: ${rf.weather[0].main}`)
         } catch (error) {
-            msg.reply(`Erro: ${error}`)
+            //msg.reply(`Erro: ${error}`)
+            msg.reply('Erro: Talvez a cidade não exista ou talvez eu não tenha olhado direito')
         }
 
 
     }
-    //     if(msg.content === '!ajuda'){
-    //         msg.se
-    //     }
+    if (string(msg.content).contains(".s")) {
+        const {
+            s: cmd
+        } = string(msg.content).replaceAll(".s ", '')
+        if (msg.member.voice.channel) {
+            //await msg.member.voice.channel.join()
+            //await msg.channel.send(`'s portuguese ${cmd}`)
+            await msg.reply('Ainda estou trabalhando nesse comando')
+        }
+
+    }
+    if (msg.content === '!sair') {
+        msg.member.voice.channel.leave()
+        msg.member.lastMessage.react('☹')
+    }
 })
